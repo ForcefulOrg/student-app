@@ -5,8 +5,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        BACKEND_URL: 'http://backend:5270'
+    links:
+      - 'backend:backend'
     ports:
-      - '3000:80'
+      - '80:80'
     depends_on:
       - backend
 
@@ -15,4 +19,4 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - '5000:5000'
+      - '5270:5270'

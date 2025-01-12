@@ -16,6 +16,7 @@ RUN dotnet publish -c Release -o /app
 
 # Use the official .NET runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
+ENV ASPNETCORE_URLS=http://+:5270
 
 # Set the working directory
 WORKDIR /app
@@ -23,8 +24,7 @@ WORKDIR /app
 # Copy the build output
 COPY --from=build /app .
 
-# Expose port 5000
-EXPOSE 5000
+EXPOSE 5270
 
 # Start the application
 ENTRYPOINT ["dotnet", "backend.dll"]

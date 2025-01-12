@@ -4,16 +4,18 @@ import '../App.css'; // Add this line
 function App() {
   const [students, setStudents] = useState([]);
   const [newStudent, setNewStudent] = useState({ name: '', age: '' });
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  const environment = process.env.NODE_ENV;
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/students') // Ensure this URL matches your backend URL
+    console.log(`Backend URL: ${backendUrl}`); // Log the backend URL
+    fetch(`${backendUrl}/api/students`)
       .then((response) => response.json())
       .then((data) => setStudents(data));
-  }, []);
+  }, [backendUrl]);
 
   const addStudent = () => {
-    fetch('http://localhost:5000/api/students', {
-      // Ensure this URL matches your backend URL
+    fetch(`${backendUrl}/api/students`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,6 +81,8 @@ function App() {
         <br />
         <button onClick={addStudent}>Add Student</button>
       </div>
+      <p>Backend url: {backendUrl}</p>
+      <p>Environment: {environment}</p>
     </div>
   );
 }

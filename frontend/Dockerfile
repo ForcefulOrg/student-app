@@ -1,5 +1,6 @@
 # Use an official Node.js runtime as a parent image
 FROM node:18
+ARG BACKEND_URL
 
 # Set the working directory
 WORKDIR /app
@@ -12,6 +13,9 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
+
+# Replace the backend URL in the environment file
+RUN echo "REACT_APP_BACKEND_URL=$BACKEND_URL" > .env
 
 # Build the application
 RUN npm run build
