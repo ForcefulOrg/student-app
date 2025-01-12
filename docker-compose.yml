@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        BACKEND_URL: 'http://backend:5270'
+        BACKEND_URL: 'http://localhost:5270'
     links:
       - 'backend:backend'
     ports:
@@ -19,4 +19,4 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - '5271:5270'
+      - '5270:5270'
