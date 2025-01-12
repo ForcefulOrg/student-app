@@ -15,12 +15,14 @@ function App() {
     const fetchStudents = async () => {
       try {
         console.log('Fetching student data...');
-        const response = await axios.get<Student[]>(`${backendUrl}/api/students`);
-        console.log('Student data:', response.data);
-        setStudents(response.data);
-        setLoading(false);
+        const response = await fetch(`${backendUrl}/api/students`);
+        const students = await response.json();
+        console.log('Student data:', students);
+        setStudents(students);
       } catch (error) {
         console.error('Error fetching student data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 

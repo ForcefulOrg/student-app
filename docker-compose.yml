@@ -19,4 +19,4 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - '5270:5270'
+      - '5271:5270'
