@@ -28,9 +28,11 @@ This is a simple React application that serves as a starting point for building 
 ## Usage
 
 To start the development server, run:
+
 ```
 npm start
 ```
+
 This will open the application in your default web browser at `http://localhost:3000`.
 
 ## Folder Structure
@@ -57,3 +59,7 @@ Contributions are welcome! Please open an issue or submit a pull request.
 ## License
 
 This project is licensed under the MIT License.
+
+## Deployment
+
+Using Github Actions
