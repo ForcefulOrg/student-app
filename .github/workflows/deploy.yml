@@ -14,9 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
       - name: Build and push frontend image
         run: |
           docker build -t your-dockerhub-username/frontend:latest ./frontend
@@ -29,12 +26,12 @@ jobs:
 
           - name: Build and push frontend image
             run: |
-              docker build -t your-azure-registry-name.azurecr.io/frontend:latest ./frontend
-              docker push your-azure-registry-name.azurecr.io/frontend:latest
+              docker build -t your-azure-registry-name.azurecr.io/student-frontend:latest ./frontend
+              docker push your-azure-registry-name.azurecr.io/student-frontend:latest
       - name: Build and push backend image
         run: |
-          docker build -t your-azure-registry-name.azurecr.io/backend:latest ./backend
-          docker push your-azure-registry-name.azurecr.io/backend:latest
+          docker build -t your-azure-registry-name.azurecr.io/student-backend:latest ./backend
+          docker push your-azure-registry-name.azurecr.io/student-backend:latest
 
       - name: Azure Login
         uses: azure/login@v1
@@ -47,5 +44,5 @@ jobs:
           app-name: myWebApp
           slot-name: production
           images: |
-            your-dockerhub-username/frontend:latest
-            your-dockerhub-username/backend:latest
+            your-azure-registry-name.azurecr.io/frontend:latest
+            your-azure-registry-name.azurecr.io/backend:latest
