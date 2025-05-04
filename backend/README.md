@@ -6,14 +6,16 @@ This is an ASP.NET Core API project named "backend" that provides weather foreca
 
 - **Controllers**
   - `WeatherForecastController.cs`: Handles HTTP requests related to weather forecasts.
-  
 - **Models**
+
   - `WeatherForecast.cs`: Defines the properties of a weather forecast.
 
 - **Properties**
+
   - `launchSettings.json`: Contains settings for launching the application.
 
 - **Configuration Files**
+
   - `appsettings.Development.json`: Configuration settings for the development environment.
   - `appsettings.json`: General configuration settings for the application.
 
@@ -25,26 +27,30 @@ This is an ASP.NET Core API project named "backend" that provides weather foreca
 ## Getting Started
 
 1. Clone the repository:
+
    ```
    git clone <repository-url>
    ```
 
 2. Navigate to the project directory:
+
    ```
    cd backend
    ```
 
 3. Restore the dependencies:
+
    ```
    dotnet restore
    ```
 
 4. Run the application:
+
    ```
    dotnet run
    ```
 
-5. Access the API at `http://localhost:5000` and the OpenAPI documentation at `http://localhost:5000/swagger`.
+5. Access the API at `http://localhost:5270` and the OpenAPI documentation at `http://localhost:5270/swagger`.
 
 ## API Endpoints
 
