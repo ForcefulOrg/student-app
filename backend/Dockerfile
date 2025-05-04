@@ -24,7 +24,7 @@ WORKDIR /app
 # Copy the build output
 COPY --from=build /app .
 
-EXPOSE 5270
+EXPOSE 80
 
 # Start the application
 ENTRYPOINT ["dotnet", "backend.dll"]
