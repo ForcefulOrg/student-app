@@ -37,5 +37,5 @@ jobs:
           app-name: myWebApp
           slot-name: production
           images: |
-            {{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/frontend:latest
-            {{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/backend:latest
+            {{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/frontend:latest
+            {{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/backend:latest
