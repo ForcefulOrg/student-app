@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o /app
 
 # Use the official .NET runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
-ENV ASPNETCORE_URLS=http://+:5270
+ENV ASPNETCORE_URLS=http://+:80
 
 # Set the working directory
 WORKDIR /app
