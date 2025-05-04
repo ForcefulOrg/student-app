@@ -31,11 +31,19 @@ jobs:
           docker build -t ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest ./backend
           docker push ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+      - name: Log in to Azure
+        uses: azure/login@v2
         with:
-          app-name: myWebApp
-          slot-name: production
-          images: |
-            {{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/frontend:latest
-            {{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/backend:latest
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App Backend
+            uses: azure/webapps-deploy@v2
+            with:
+              app-name: student-app-backend
+              images: ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest
+              
+       - name: Deploy to Azure Web App Frontend
+            uses: azure/webapps-deploy@v2
+            with:
+              app-name: student-app-frontend
+              images: ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-frontend:latest
