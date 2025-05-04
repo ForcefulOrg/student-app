@@ -4,6 +4,7 @@ export default class Student {
 
     public name: string,
 
-    public age: number
+    public age: number,
+    public summary: string
   ) {}
 }

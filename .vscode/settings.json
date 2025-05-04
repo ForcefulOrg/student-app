@@ -1,0 +1,33 @@
+{
+  "sqltools.connections": [
+    {
+      "connectionTimeout": 15,
+      "mssqlOptions": {
+        "appName": "SQLTools",
+        "useUTC": true,
+        "encrypt": true,
+        "trustServerCertificate": false
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "MSSQL",
+      "connectString": "Server=tcp:studentdb42.database.windows.net,1433;Initial Catalog=studentdb42;Persist Security Info=False;User ID=cglaeser;Password=CVxroN42wuHB7v2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+      "name": "studentdb42"
+    },
+    {
+      "connectionTimeout": 15,
+      "mssqlOptions": {
+        "appName": "SQLTools",
+        "useUTC": true,
+        "encrypt": true,
+        "trustServerCertificate": false
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "driver": "MSSQL",
+      "name": "studentdb42.database.windows.com",
+      "connectString": "Server=tcp:studentdb42.database.windows.net,1433;Initial Catalog=studentdb42;Persist Security Info=False;User ID=cglaeser;Password=CVxroN42wuHB7v2;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+      "group": "Student DB"
+    }
+  ]
+}

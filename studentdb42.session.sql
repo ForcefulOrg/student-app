@@ -1,11 +1,3 @@
--- Create the database
-CREATE DATABASE studentdb42
-( 
-    SERVICE_OBJECTIVE = 'GP_S_Gen5_2', 
-    MAXSIZE = 5 GB, 
-    auto_pause_delay_in_minutes = 60
-);
-
 -- Switch to the new database
 USE studentdb42;
 

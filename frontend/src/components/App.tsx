@@ -5,7 +5,7 @@ import Student from '../types/Student';
 
 function App() {
   const [students, setStudents] = useState<Student[]>([]);
-  const [newStudent, setNewStudent] = useState({ name: '', age: '' });
+  const [newStudent, setNewStudent] = useState({ name: '', age: '', summary: '' });
   const [loading, setLoading] = useState(true);
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
   const environment = process.env.NODE_ENV;
@@ -34,11 +34,13 @@ function App() {
       .post(`${backendUrl}/api/students`, {
         name: newStudent.name,
         age: parseInt(newStudent.age, 10),
+        summary: newStudent.summary,
       })
       .then((response) => {
-        const student = new Student(response.data.id, response.data.name, response.data.age);
+        const student = new Student(response.data.id, response.data.name, response.data.age, response.data.summary);
         setStudents([...students, student]);
-        setNewStudent({ name: '', age: '' });
+        setNewStudent({ name: '', age: '', summary: '' });
+        alert('Student added successfully!');
       })
       .catch((error) => console.error('Error adding student:', error));
   };
@@ -55,6 +57,7 @@ function App() {
               <tr>
                 <th>Name</th>
                 <th>Age</th>
+                <th>Summary</th>
               </tr>
             </thead>
             <tbody>
@@ -62,6 +65,7 @@ function App() {
                 <tr key={student.id}>
                   <td>{student.name}</td>
                   <td>{student.age}</td>
+                  <td>{student.summary}</td>
                 </tr>
               ))}
             </tbody>
@@ -82,6 +86,14 @@ function App() {
                 type='text'
                 value={newStudent.age}
                 onChange={(e) => setNewStudent({ ...newStudent, age: e.target.value })}
+              />
+            </label>
+            <label>
+              Summary:
+              <input
+                type='text'
+                value={newStudent.summary}
+                onChange={(e) => setNewStudent({ ...newStudent, summary: e.target.value })}
               />
             </label>
             <button onClick={addStudent}>Add Student</button>
