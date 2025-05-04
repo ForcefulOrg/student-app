@@ -23,13 +23,13 @@ jobs:
 
       - name: Build and push frontend image
         run: |
-          docker build -t ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/student-frontend:latest ./frontend
-          docker push ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/student-frontend:latest
+          docker build -t ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-frontend:latest ./frontend
+          docker push ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-frontend:latest
 
       - name: Build and push backend image
         run: |
-          docker build -t ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest ./backend
-          docker push ${{ secrets.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest
+          docker build -t ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest ./backend
+          docker push ${{ vars.AZURE_REGISTRY_LOGIN_SERVER }}/student-backend:latest
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
