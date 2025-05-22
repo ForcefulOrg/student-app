@@ -6,6 +6,11 @@ Description of the application to be added.
 Description on how to deploy to be added.
 
 Environment variables needed:
+[Github Action Secrets](/settings/secrets/actions)
+AZURE_CREDENTIALS - 
+AZURE_REGISTRY_PASSWORD - 
+AZURE_REGISTRY_USERNAME - 
 
+<github-com-repository-path>/student-app/settings/variables/actions
 AZURE_REGISTRY_LOGIN_SERVER - The name of the container registry being used, e.g. student-app-cr.azurecr.io
 AZURE_RESOURCE_GROUP - The resource group name, e.g. learn-to-build-rg
