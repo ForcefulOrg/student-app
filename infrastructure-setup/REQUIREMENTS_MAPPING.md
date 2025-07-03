@@ -10,7 +10,7 @@ This document maps the issue requirements to the implemented Azure infrastructur
 - **Resource**: Azure Container Registry (Basic SKU)
 - **Features**: 
   - Admin user enabled for GitHub Actions
-  - Unique naming: `student-app-cr-{suffix}`
+  - Unique naming: `studentappcr{5-char-suffix}` (alphanumeric only, complies with ACR naming requirements)
   - Integration with Web Apps for container deployment
 
 ### 2. Backend Web App for Containerized Application
@@ -58,9 +58,9 @@ This document maps the issue requirements to the implemented Azure infrastructur
 **Requirement**: Create random and unique number to be generated into the name of each resource
 - **Implementation**: `main.bicep` - `uniqueString(resourceGroup().id)`
 - **Approach**: Uses Azure's built-in `uniqueString()` function
-- **Result**: 13-character unique suffix based on resource group ID (5-character substring for storage accounts)
+- **Result**: 5-character unique suffix based on resource group ID for all resources
 - **Benefits**: Guaranteed uniqueness, reproducible for same resource group
-- **Note**: Storage accounts use only first 5 characters to comply with Azure naming requirements (24 char limit, lowercase/numbers only)
+- **Note**: All resources now use 5-character substring to comply with naming requirements and limits
 
 ### 7. GitHub Action Workflow with Manual Trigger
 **Requirement**: GitHub Action workflow that can create the resources but so that it'll be triggered manually
@@ -112,11 +112,11 @@ The infrastructure templates are designed based on analysis of the existing appl
 
 ```
 Resource Group: student-app-{env}-{suffix}-rg
-├── Container Registry: student-app-cr-{suffix}
-├── App Service Plan: student-app-plan-{suffix}
-├── Backend Web App: student-app-backend-{suffix}
-├── Frontend Web App: student-app-frontend-{suffix}
-├── SQL Server: student-app-sql-{suffix}
+├── Container Registry: studentappcr{5-char-suffix}
+├── App Service Plan: student-app-plan-{5-char-suffix}
+├── Backend Web App: student-app-backend-{5-char-suffix}
+├── Frontend Web App: student-app-frontend-{5-char-suffix}
+├── SQL Server: student-app-sql-{5-char-suffix}
 ├── SQL Database: student-appdb
 └── Storage Account: studentapplogs{5-char-suffix}
     └── Blob Container: application-logs

@@ -23,7 +23,7 @@ module containerRegistry 'modules/container-registry.bicep' = {
   name: 'containerRegistry'
   params: {
     location: location
-    registryName: '${appName}cr${uniqueSuffix}'
+    registryName: '${replace(appName, '-', '')}cr${substring(uniqueSuffix, 0, 5)}'
     environment: environment
   }
 }
@@ -43,7 +43,7 @@ module sqlDatabase 'modules/sql-database.bicep' = {
   name: 'sqlDatabase'
   params: {
     location: location
-    serverName: '${appName}-sql-${uniqueSuffix}'
+    serverName: '${appName}-sql-${substring(uniqueSuffix, 0, 5)}'
     databaseName: '${appName}db'
     administratorLogin: sqlAdminUsername
     administratorLoginPassword: sqlAdminPassword
@@ -56,9 +56,9 @@ module webApps 'modules/web-apps.bicep' = {
   name: 'webApps'
   params: {
     location: location
-    appServicePlanName: '${appName}-plan-${uniqueSuffix}'
-    backendAppName: '${appName}-backend-${uniqueSuffix}'
-    frontendAppName: '${appName}-frontend-${uniqueSuffix}'
+    appServicePlanName: '${appName}-plan-${substring(uniqueSuffix, 0, 5)}'
+    backendAppName: '${appName}-backend-${substring(uniqueSuffix, 0, 5)}'
+    frontendAppName: '${appName}-frontend-${substring(uniqueSuffix, 0, 5)}'
     containerRegistryName: containerRegistry.outputs.registryName
     containerRegistryUrl: containerRegistry.outputs.loginServer
     sqlServerName: sqlDatabase.outputs.serverName
