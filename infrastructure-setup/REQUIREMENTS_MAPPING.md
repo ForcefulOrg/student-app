@@ -52,14 +52,15 @@ This document maps the issue requirements to the implemented Azure infrastructur
   - Blob container for application logs
   - HTTPS required, secure access
   - Hot access tier for performance
-  - Unique naming: `student-app-logs-{suffix}`
+  - Unique naming: `studentapplogs{5-char-suffix}` (complies with storage account naming requirements)
 
 ### 6. Random and Unique Numbers in Resource Names
 **Requirement**: Create random and unique number to be generated into the name of each resource
 - **Implementation**: `main.bicep` - `uniqueString(resourceGroup().id)`
 - **Approach**: Uses Azure's built-in `uniqueString()` function
-- **Result**: 13-character unique suffix based on resource group ID
+- **Result**: 13-character unique suffix based on resource group ID (5-character substring for storage accounts)
 - **Benefits**: Guaranteed uniqueness, reproducible for same resource group
+- **Note**: Storage accounts use only first 5 characters to comply with Azure naming requirements (24 char limit, lowercase/numbers only)
 
 ### 7. GitHub Action Workflow with Manual Trigger
 **Requirement**: GitHub Action workflow that can create the resources but so that it'll be triggered manually
@@ -117,7 +118,7 @@ Resource Group: student-app-{env}-{suffix}-rg
 ├── Frontend Web App: student-app-frontend-{suffix}
 ├── SQL Server: student-app-sql-{suffix}
 ├── SQL Database: student-appdb
-└── Storage Account: student-app-logs-{suffix}
+└── Storage Account: studentapplogs{5-char-suffix}
     └── Blob Container: application-logs
 ```
 

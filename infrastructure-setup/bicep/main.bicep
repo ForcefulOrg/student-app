@@ -33,7 +33,7 @@ module storageAccount 'modules/storage-account.bicep' = {
   name: 'storageAccount'
   params: {
     location: location
-    storageAccountName: '${appName}logs${uniqueSuffix}'
+    storageAccountName: '${replace(appName, '-', '')}logs${substring(uniqueSuffix, 0, 5)}'
     environment: environment
   }
 }
