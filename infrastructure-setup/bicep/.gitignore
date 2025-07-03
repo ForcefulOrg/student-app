@@ -1,0 +1,6 @@
+# Bicep compiled templates
+*.json
+!parameters.json
+
+# Deployment artifacts
+deployment-output.json

@@ -4,11 +4,47 @@ This app is a part of "Shipping containers to Azure CloudLand using native tooli
 
 ## Description 📚
 
-Description of the application to be added.
+A student management application built with:
+- **Backend**: ASP.NET Core 9.0 API with Entity Framework and SQL Server
+- **Frontend**: React TypeScript application with modern UI
+- **Infrastructure**: Azure-native deployment using Bicep templates
+
+The application allows users to manage student records with full CRUD operations through a responsive web interface.
 
 ## How to deploy ⚙️
 
-Description on how to deploy to be added.
+### 🏗️ Infrastructure Setup (New!)
+
+The repository now includes automated infrastructure deployment using Bicep templates. This creates all necessary Azure resources:
+
+1. **Deploy Infrastructure** (one-time setup):
+   - Go to **Actions** → **Deploy Azure Infrastructure**
+   - Click **Run workflow** and configure:
+     - Environment (dev/staging/prod)
+     - Azure region
+     - SQL admin credentials
+   - The workflow creates all resources with unique names
+
+2. **Update GitHub Settings**:
+   After infrastructure deployment, update your repository with the provided values:
+   - **Variables**: `AZURE_REGISTRY_LOGIN_SERVER`, `AZURE_RESOURCE_GROUP`
+   - **Secrets**: `AZURE_REGISTRY_USERNAME`, `AZURE_REGISTRY_PASSWORD`
+
+3. **Deploy Application**:
+   - Push to main/master branch to trigger automatic deployment
+   - Or manually run the **Deploy to Azure Web App** workflow
+
+### 📋 Infrastructure Components
+
+- **Container Registry**: Stores Docker images
+- **Web Apps**: Frontend (React) and Backend (API) hosting
+- **SQL Database**: Student data storage (Basic tier)
+- **Storage Account**: Application logging
+- **App Service Plan**: Shared hosting plan
+
+For detailed infrastructure documentation, see [`infrastructure-setup/bicep/README.md`](infrastructure-setup/bicep/README.md).
+
+### 🔧 Manual Setup (Legacy)
 
 ### Find relevant details:
 

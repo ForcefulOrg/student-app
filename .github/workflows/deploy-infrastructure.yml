@@ -1,0 +1,146 @@
+name: Deploy Azure Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - staging
+        - prod
+      location:
+        description: 'Azure region for deployment'
+        required: true
+        default: 'East US'
+        type: choice
+        options:
+        - East US
+        - West US 2
+        - West Europe
+        - North Europe
+      resourceGroupName:
+        description: 'Resource group name (leave empty to generate unique name)'
+        required: false
+        type: string
+      sqlAdminUsername:
+        description: 'SQL Server admin username'
+        required: true
+        default: 'sqladmin'
+        type: string
+
+jobs:
+  deploy-infrastructure:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Generate unique resource group name
+      id: generate-names
+      run: |
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        RANDOM_SUFFIX=$(echo $RANDOM | md5sum | head -c 6; echo;)
+        
+        if [ -z "${{ github.event.inputs.resourceGroupName }}" ]; then
+          RG_NAME="student-app-${{ github.event.inputs.environment }}-${RANDOM_SUFFIX}-rg"
+        else
+          RG_NAME="${{ github.event.inputs.resourceGroupName }}"
+        fi
+        
+        echo "RESOURCE_GROUP_NAME=${RG_NAME}" >> $GITHUB_OUTPUT
+        echo "DEPLOYMENT_NAME=student-app-deployment-${TIMESTAMP}" >> $GITHUB_OUTPUT
+        echo "Generated Resource Group: ${RG_NAME}"
+        echo "Generated Deployment Name: student-app-deployment-${TIMESTAMP}"
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Create Resource Group
+      run: |
+        az group create \
+          --name ${{ steps.generate-names.outputs.RESOURCE_GROUP_NAME }} \
+          --location "${{ github.event.inputs.location }}"
+
+    - name: Deploy Bicep template
+      id: deploy
+      run: |
+        az deployment group create \
+          --resource-group ${{ steps.generate-names.outputs.RESOURCE_GROUP_NAME }} \
+          --template-file infrastructure-setup/bicep/main.bicep \
+          --parameters \
+            location="${{ github.event.inputs.location }}" \
+            environment="${{ github.event.inputs.environment }}" \
+            sqlAdminUsername="${{ github.event.inputs.sqlAdminUsername }}" \
+            sqlAdminPassword="${{ secrets.SQL_ADMIN_PASSWORD }}" \
+          --name ${{ steps.generate-names.outputs.DEPLOYMENT_NAME }} \
+          --output json > deployment-output.json
+        
+        # Parse deployment outputs
+        CONTAINER_REGISTRY_NAME=$(cat deployment-output.json | jq -r '.properties.outputs.containerRegistryName.value')
+        CONTAINER_REGISTRY_LOGIN_SERVER=$(cat deployment-output.json | jq -r '.properties.outputs.containerRegistryLoginServer.value')
+        BACKEND_APP_NAME=$(cat deployment-output.json | jq -r '.properties.outputs.backendAppName.value')
+        FRONTEND_APP_NAME=$(cat deployment-output.json | jq -r '.properties.outputs.frontendAppName.value')
+        SQL_SERVER_NAME=$(cat deployment-output.json | jq -r '.properties.outputs.sqlServerName.value')
+        SQL_DATABASE_NAME=$(cat deployment-output.json | jq -r '.properties.outputs.sqlDatabaseName.value')
+        STORAGE_ACCOUNT_NAME=$(cat deployment-output.json | jq -r '.properties.outputs.storageAccountName.value')
+        
+        echo "CONTAINER_REGISTRY_NAME=${CONTAINER_REGISTRY_NAME}" >> $GITHUB_OUTPUT
+        echo "CONTAINER_REGISTRY_LOGIN_SERVER=${CONTAINER_REGISTRY_LOGIN_SERVER}" >> $GITHUB_OUTPUT
+        echo "BACKEND_APP_NAME=${BACKEND_APP_NAME}" >> $GITHUB_OUTPUT
+        echo "FRONTEND_APP_NAME=${FRONTEND_APP_NAME}" >> $GITHUB_OUTPUT
+        echo "SQL_SERVER_NAME=${SQL_SERVER_NAME}" >> $GITHUB_OUTPUT
+        echo "SQL_DATABASE_NAME=${SQL_DATABASE_NAME}" >> $GITHUB_OUTPUT
+        echo "STORAGE_ACCOUNT_NAME=${STORAGE_ACCOUNT_NAME}" >> $GITHUB_OUTPUT
+
+    - name: Get Container Registry credentials
+      id: registry-creds
+      run: |
+        REGISTRY_USERNAME=$(az acr credential show --name ${{ steps.deploy.outputs.CONTAINER_REGISTRY_NAME }} --query username --output tsv)
+        REGISTRY_PASSWORD=$(az acr credential show --name ${{ steps.deploy.outputs.CONTAINER_REGISTRY_NAME }} --query passwords[0].value --output tsv)
+        
+        echo "REGISTRY_USERNAME=${REGISTRY_USERNAME}" >> $GITHUB_OUTPUT
+        echo "::add-mask::${REGISTRY_PASSWORD}"
+        echo "REGISTRY_PASSWORD=${REGISTRY_PASSWORD}" >> $GITHUB_OUTPUT
+
+    - name: Deploy summary
+      run: |
+        echo "## 🚀 Infrastructure Deployment Completed Successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📋 Deployment Details" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment**: ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Location**: ${{ github.event.inputs.location }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Resource Group**: ${{ steps.generate-names.outputs.RESOURCE_GROUP_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🏗️ Created Resources" >> $GITHUB_STEP_SUMMARY
+        echo "- **Container Registry**: ${{ steps.deploy.outputs.CONTAINER_REGISTRY_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Backend App**: ${{ steps.deploy.outputs.BACKEND_APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Frontend App**: ${{ steps.deploy.outputs.FRONTEND_APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **SQL Server**: ${{ steps.deploy.outputs.SQL_SERVER_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **SQL Database**: ${{ steps.deploy.outputs.SQL_DATABASE_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Storage Account**: ${{ steps.deploy.outputs.STORAGE_ACCOUNT_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔧 GitHub Actions Variables to Update" >> $GITHUB_STEP_SUMMARY
+        echo "Set these in your repository variables:" >> $GITHUB_STEP_SUMMARY
+        echo "- **AZURE_REGISTRY_LOGIN_SERVER**: ${{ steps.deploy.outputs.CONTAINER_REGISTRY_LOGIN_SERVER }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **AZURE_RESOURCE_GROUP**: ${{ steps.generate-names.outputs.RESOURCE_GROUP_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔐 GitHub Actions Secrets to Update" >> $GITHUB_STEP_SUMMARY
+        echo "Set these in your repository secrets:" >> $GITHUB_STEP_SUMMARY
+        echo "- **AZURE_REGISTRY_USERNAME**: ${{ steps.registry-creds.outputs.REGISTRY_USERNAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **AZURE_REGISTRY_PASSWORD**: (generated automatically)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🌐 Application URLs" >> $GITHUB_STEP_SUMMARY
+        echo "- **Frontend**: https://${{ steps.deploy.outputs.FRONTEND_APP_NAME }}.azurewebsites.net" >> $GITHUB_STEP_SUMMARY
+        echo "- **Backend API**: https://${{ steps.deploy.outputs.BACKEND_APP_NAME }}.azurewebsites.net" >> $GITHUB_STEP_SUMMARY
+        echo "- **API Documentation**: https://${{ steps.deploy.outputs.BACKEND_APP_NAME }}.azurewebsites.net/swagger" >> $GITHUB_STEP_SUMMARY
+
+    - name: Clean up
+      run: |
+        rm -f deployment-output.json
